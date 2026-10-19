@@ -284,7 +284,7 @@ jobs:
 
   publish:
     name: Publish GitHub release
-    needs: [resolve-version, android, linux, windows, ios, macos]
+    needs: [resolve-version, android, ubuntu_2604, linux, windows, ios, macos]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
