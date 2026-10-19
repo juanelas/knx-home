@@ -1,0 +1,9 @@
+Package: knx-home
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libgtk-3-0 | libgtk-3-0t64, libstdc++6
+Maintainer: Juanelas
+Description: KNX home controller
+ KNX home controller for Linux desktops.

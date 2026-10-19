@@ -1,0 +1,36 @@
+rooms:
+- name: Salón
+  devices:
+  - name: Corner outlet
+    type: outlet
+    group_address: 1/1/30
+    state_group_address: 1/4/30
+  - name: Ceiling light
+    type: light
+    group_address: 1/1/5
+    state_group_address: 1/4/5
+  - name: Climate
+    type: thermostat
+    temperature_group_address: 4/1/1
+    target_temperature_group_address: 4/1/3
+    target_temperature_state_group_address: 4/1/13
+    on_off_group_address: 4/1/2
+    on_off_state_group_address: 4/1/12
+    cool_heat_group_address: 4/1/0
+    cool_heat_state_group_address: 4/1/11
+    min_temperature: 16
+    max_temperature: 30
+    temperature_step: 0.5
+- name: Room 1
+  devices:
+  - name: Ceiling light
+    type: light
+    group_address: 1/1/11
+    state_group_address: 1/4/11
+  - name: Blind slider
+    type: cover
+    move_group_address: 2/1/2
+    stop_group_address: 2/2/2
+    position_group_address: 2/3/2
+    position_state_group_address: 2/4/2
+    invert_position: true

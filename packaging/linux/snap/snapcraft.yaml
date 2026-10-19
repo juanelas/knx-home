@@ -1,0 +1,24 @@
+name: knx-home
+base: core24
+version: '1.0.0'
+summary: KNX home controller
+description: KNX home controller for Linux desktops.
+grade: stable
+confinement: strict
+
+apps:
+  knx-home:
+    command: knx_home
+    extensions: [gnome]
+    desktop: usr/share/applications/knx-home.desktop
+    plugs:
+      - network
+
+parts:
+  knx-home:
+    plugin: dump
+    source: app
+    stage-packages:
+      - libgtk-3-0
+      - libgtk-3-0t64
+      - libstdc++6

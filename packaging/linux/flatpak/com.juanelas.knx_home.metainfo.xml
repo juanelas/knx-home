@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.juanelas.knx_home</id>
+  <name>KNX home</name>
+  <summary>Control KNX home automation from your devices</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <developer id="com.juanelas">
+    <name>Juanelas</name>
+  </developer>
+  <url type="homepage">https://github.com/juanelas/knx-home</url>
+  <description>
+    <p>KNX home connects directly to a KNXnet/IP tunneling gateway on your local network to control your KNX home automation system.</p>
+    <p>It provides room and function views, device controls, live state updates, and a bus monitor. It does not require a web server or cloud service.</p>
+  </description>
+  <launchable type="desktop-id">com.juanelas.knx_home.desktop</launchable>
+</component>

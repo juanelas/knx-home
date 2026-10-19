@@ -1,0 +1,27 @@
+name: knx-home
+base: core26
+version: '1.0.0'
+summary: KNX home controller
+description: KNX home controller for Linux desktops.
+grade: stable
+confinement: strict
+
+apps:
+  knx-home:
+    command: knx_home
+    desktop: usr/share/applications/knx-home.desktop
+    plugs:
+      - desktop
+      - home
+      - network
+      - network-bind
+      - opengl
+      - wayland
+      - x11
+
+parts:
+  app:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
+
