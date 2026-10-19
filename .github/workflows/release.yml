@@ -120,7 +120,7 @@ jobs:
           sed -i "s/^version: .*/version: '${VERSION}'/" packaging/linux/snap/snapcraft.yaml
           sudo snap install snapcraft --classic
           cd packaging/linux/snap
-          sudo snapcraft pack --destructive-mode
+          snapcraft pack
           mv "knx-home_${VERSION}_amd64.snap" "../../../dist/knx-home-${RELEASE_TAG}-amd64.snap"
           cd ../../..
       - name: Build Flatpak package
