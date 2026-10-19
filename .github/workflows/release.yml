@@ -112,7 +112,7 @@ jobs:
           dpkg-deb --build --root-owner-group "$PACKAGE_DIR" "dist/knx-home-${RELEASE_TAG}-ubuntu-26.04-amd64.deb"
       - uses: actions/upload-artifact@v7
         with:
-          name: linux
+          name: ubuntu2604
           path: dist/*
           if-no-files-found: error
 
@@ -222,7 +222,7 @@ jobs:
           flutter build windows --release --build-name=$version --build-number=$env:GITHUB_RUN_NUMBER
           New-Item -ItemType Directory -Force dist | Out-Null
           Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "dist/knx-home-windows-$env:RELEASE_TAG.zip"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows
           path: dist/*
@@ -249,7 +249,7 @@ jobs:
           flutter build ipa --release --no-codesign --build-name="$RELEASE_VERSION" --build-number="$GITHUB_RUN_NUMBER"
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent build/ios/archive/Runner.xcarchive "dist/knx-home-ios-${RELEASE_TAG}.xcarchive.zip"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ios
           path: dist/*
@@ -276,7 +276,7 @@ jobs:
           flutter build macos --release --build-name="$RELEASE_VERSION" --build-number="$GITHUB_RUN_NUMBER"
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/knx_home.app "dist/knx-home-macos-${RELEASE_TAG}.zip"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos
           path: dist/*
