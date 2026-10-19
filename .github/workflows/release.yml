@@ -70,51 +70,51 @@ jobs:
   #         path: dist/*
   #         if-no-files-found: error
 
-  ubuntu_2604:
-    name: Ubnutu 26.04
-    needs: resolve-version
-    runs-on: ubuntu-26.04
-    env:
-      RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
-      RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.resolve-version.outputs.checkout_ref }}
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - name: Install Linux build dependencies
-        run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev imagemagick
-      - run: flutter pub get
-      - name: Build Linux bundle
-        run: |
-          flutter build linux --release --build-name="$RELEASE_VERSION" --build-number="$GITHUB_RUN_NUMBER"
-          mkdir -p dist
-          convert assets/app_icon.png -resize 512x512 build/linux/knx-home-512.png
-          tar -czf "dist/knx-home-linux-${RELEASE_TAG}.tar.gz" -C build/linux/x64/release/bundle .
-      - name: Build Debian package
-        run: |
-          VERSION="$RELEASE_VERSION"
-          PACKAGE_DIR="build/linux/deb/knx-home_${VERSION}_amd64"
-          mkdir -p "$PACKAGE_DIR/DEBIAN" "$PACKAGE_DIR/opt/knx-home" "$PACKAGE_DIR/usr/bin" "$PACKAGE_DIR/usr/share/applications" "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps"
-          cp -a build/linux/x64/release/bundle/. "$PACKAGE_DIR/opt/knx-home/"
-          sed "s/^Version: .*/Version: ${VERSION}/" packaging/linux/deb/control > "$PACKAGE_DIR/DEBIAN/control"
-          cp packaging/linux/knx-home.desktop "$PACKAGE_DIR/usr/share/applications/knx-home.desktop"
-          cp build/linux/knx-home-512.png "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps/knx-home.png"
-          cat > "$PACKAGE_DIR/usr/bin/knx-home" <<'EOF'
-          #!/bin/sh
-          cd /opt/knx-home
-          exec ./knx_home "$@"
-          EOF
-          chmod 755 "$PACKAGE_DIR/usr/bin/knx-home"
-          dpkg-deb --build --root-owner-group "$PACKAGE_DIR" "dist/knx-home-${RELEASE_TAG}-ubuntu-26.04-amd64.deb"
-      - uses: actions/upload-artifact@v7
-        with:
-          name: linux
-          path: dist/*
-          if-no-files-found: error
+  # ubuntu_2604:
+  #   name: Ubnutu 26.04
+  #   needs: resolve-version
+  #   runs-on: ubuntu-26.04
+  #   env:
+  #     RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
+  #     RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #       with:
+  #         ref: ${{ needs.resolve-version.outputs.checkout_ref }}
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: stable
+  #         cache: true
+  #     - name: Install Linux build dependencies
+  #       run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev imagemagick
+  #     - run: flutter pub get
+  #     - name: Build Linux bundle
+  #       run: |
+  #         flutter build linux --release --build-name="$RELEASE_VERSION" --build-number="$GITHUB_RUN_NUMBER"
+  #         mkdir -p dist
+  #         convert assets/app_icon.png -resize 512x512 build/linux/knx-home-512.png
+  #         tar -czf "dist/knx-home-linux-${RELEASE_TAG}.tar.gz" -C build/linux/x64/release/bundle .
+  #     - name: Build Debian package
+  #       run: |
+  #         VERSION="$RELEASE_VERSION"
+  #         PACKAGE_DIR="build/linux/deb/knx-home_${VERSION}_amd64"
+  #         mkdir -p "$PACKAGE_DIR/DEBIAN" "$PACKAGE_DIR/opt/knx-home" "$PACKAGE_DIR/usr/bin" "$PACKAGE_DIR/usr/share/applications" "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps"
+  #         cp -a build/linux/x64/release/bundle/. "$PACKAGE_DIR/opt/knx-home/"
+  #         sed "s/^Version: .*/Version: ${VERSION}/" packaging/linux/deb/control > "$PACKAGE_DIR/DEBIAN/control"
+  #         cp packaging/linux/knx-home.desktop "$PACKAGE_DIR/usr/share/applications/knx-home.desktop"
+  #         cp build/linux/knx-home-512.png "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps/knx-home.png"
+  #         cat > "$PACKAGE_DIR/usr/bin/knx-home" <<'EOF'
+  #         #!/bin/sh
+  #         cd /opt/knx-home
+  #         exec ./knx_home "$@"
+  #         EOF
+  #         chmod 755 "$PACKAGE_DIR/usr/bin/knx-home"
+  #         dpkg-deb --build --root-owner-group "$PACKAGE_DIR" "dist/knx-home-${RELEASE_TAG}-ubuntu-26.04-amd64.deb"
+  #     - uses: actions/upload-artifact@v7
+  #       with:
+  #         name: linux
+  #         path: dist/*
+  #         if-no-files-found: error
 
   linux:
     name: Ubuntu 24.04, Snap and Flatpak
@@ -140,22 +140,22 @@ jobs:
           mkdir -p dist
           convert assets/app_icon.png -resize 512x512 build/linux/knx-home-512.png
           tar -czf "dist/knx-home-linux-${RELEASE_TAG}.tar.gz" -C build/linux/x64/release/bundle .
-      - name: Build Debian package
-        run: |
-          VERSION="$RELEASE_VERSION"
-          PACKAGE_DIR="build/linux/deb/knx-home_${VERSION}_amd64"
-          mkdir -p "$PACKAGE_DIR/DEBIAN" "$PACKAGE_DIR/opt/knx-home" "$PACKAGE_DIR/usr/bin" "$PACKAGE_DIR/usr/share/applications" "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps"
-          cp -a build/linux/x64/release/bundle/. "$PACKAGE_DIR/opt/knx-home/"
-          sed "s/^Version: .*/Version: ${VERSION}/" packaging/linux/deb/control > "$PACKAGE_DIR/DEBIAN/control"
-          cp packaging/linux/knx-home.desktop "$PACKAGE_DIR/usr/share/applications/knx-home.desktop"
-          cp build/linux/knx-home-512.png "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps/knx-home.png"
-          cat > "$PACKAGE_DIR/usr/bin/knx-home" <<'EOF'
-          #!/bin/sh
-          cd /opt/knx-home
-          exec ./knx_home "$@"
-          EOF
-          chmod 755 "$PACKAGE_DIR/usr/bin/knx-home"
-          dpkg-deb --build --root-owner-group "$PACKAGE_DIR" "dist/knx-home-${RELEASE_TAG}-ubuntu-24.04-amd64.deb"
+      # - name: Build Debian package
+      #   run: |
+      #     VERSION="$RELEASE_VERSION"
+      #     PACKAGE_DIR="build/linux/deb/knx-home_${VERSION}_amd64"
+      #     mkdir -p "$PACKAGE_DIR/DEBIAN" "$PACKAGE_DIR/opt/knx-home" "$PACKAGE_DIR/usr/bin" "$PACKAGE_DIR/usr/share/applications" "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps"
+      #     cp -a build/linux/x64/release/bundle/. "$PACKAGE_DIR/opt/knx-home/"
+      #     sed "s/^Version: .*/Version: ${VERSION}/" packaging/linux/deb/control > "$PACKAGE_DIR/DEBIAN/control"
+      #     cp packaging/linux/knx-home.desktop "$PACKAGE_DIR/usr/share/applications/knx-home.desktop"
+      #     cp build/linux/knx-home-512.png "$PACKAGE_DIR/usr/share/icons/hicolor/512x512/apps/knx-home.png"
+      #     cat > "$PACKAGE_DIR/usr/bin/knx-home" <<'EOF'
+      #     #!/bin/sh
+      #     cd /opt/knx-home
+      #     exec ./knx_home "$@"
+      #     EOF
+      #     chmod 755 "$PACKAGE_DIR/usr/bin/knx-home"
+      #     dpkg-deb --build --root-owner-group "$PACKAGE_DIR" "dist/knx-home-${RELEASE_TAG}-ubuntu-24.04-amd64.deb"
       - name: Build Snap package
         run: |
           VERSION="$RELEASE_VERSION"
