@@ -18,7 +18,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
       checkout_ref: ${{ steps.version.outputs.checkout_ref }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Select version tag
@@ -48,7 +48,7 @@ jobs:
   #     RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
   #     RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v7
   #       with:
   #         ref: ${{ needs.resolve-version.outputs.checkout_ref }}
   #     - uses: android-actions/setup-android@v4
@@ -78,13 +78,14 @@ jobs:
       RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
       RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.resolve-version.outputs.checkout_ref }}
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
+          flutter-version-file: pubspec.yaml
       - name: Install Linux build dependencies
         run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev imagemagick
       - run: flutter pub get
@@ -117,7 +118,7 @@ jobs:
           cp -a build/linux/x64/release/bundle/. packaging/linux/snap/app/
           cp packaging/linux/knx-home.desktop packaging/linux/snap/app/usr/share/applications/knx-home.desktop
           cp build/linux/knx-home-512.png packaging/linux/snap/app/usr/share/icons/hicolor/512x512/apps/knx-home.png
-          sed -i "s/^version: .*/version: '${VERSION}'/" packaging/linux/snapcraft.yaml
+          sed -i "s/^version: .*/version: '${VERSION}'/" packaging/linux/snap/snapcraft.yaml
           sudo snap install snapcraft --classic
           cd packaging/linux/snap
           sudo snapcraft pack --destructive-mode
@@ -147,7 +148,7 @@ jobs:
           flatpak build-export --update-appstream build/linux/flatpak/repo build/linux/flatpak/build stable
           flatpak build-update-repo build/linux/flatpak/repo
           flatpak build-bundle build/linux/flatpak/repo "dist/knx-home-${RELEASE_TAG}-amd64.flatpak" com.juanelas.knx_home stable --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux
           path: dist/*
@@ -161,7 +162,7 @@ jobs:
   #     RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
   #     RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v7
   #       with:
   #         ref: ${{ needs.resolve-version.outputs.checkout_ref }}
   #     - uses: subosito/flutter-action@v2
@@ -190,7 +191,7 @@ jobs:
   #     RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
   #     RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v7
   #       with:
   #         ref: ${{ needs.resolve-version.outputs.checkout_ref }}
   #     - uses: subosito/flutter-action@v2
@@ -217,7 +218,7 @@ jobs:
   #     RELEASE_TAG: ${{ needs.resolve-version.outputs.tag }}
   #     RELEASE_VERSION: ${{ needs.resolve-version.outputs.version }}
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v7
   #       with:
   #         ref: ${{ needs.resolve-version.outputs.checkout_ref }}
   #     - uses: subosito/flutter-action@v2
@@ -241,8 +242,8 @@ jobs:
   #   needs: [resolve-version, android, linux, windows, ios, macos]
   #   runs-on: ubuntu-latest
   #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/download-artifact@v4
+  #     - uses: actions/checkout@v7
+  #     - uses: actions/download-artifact@v8
   #       with:
   #         path: dist
   #         merge-multiple: true
