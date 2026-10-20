@@ -985,67 +985,62 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     return Column(
       children: [
         Expanded(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1240),
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(26, 25, 26, 35),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'KNX HOME',
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.1,
-                                      color: muted,
-                                    ),
-                                  ),
-                                  Text(
-                                    title,
-                                    style: const TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    page == 2
-                                        ? 'Manage the connection, configuration and bus monitor.'
-                                        : 'Browse and control your configured devices.',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: muted,
-                                    ),
-                                  ),
-                                ],
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(26, 25, 26, 35),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'KNX HOME',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.1,
+                                  color: muted,
+                                ),
                               ),
-                            ),
-                            if (page != 2)
-                              TextButton.icon(
-                                onPressed: client.connected ? _refresh : null,
-                                icon: const Icon(Icons.refresh, size: 16),
-                                label: const Text('Refresh'),
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(
+                                page == 2
+                                    ? 'Manage the connection, configuration and bus monitor.'
+                                    : 'Browse and control your configured devices.',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: muted,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        if (page == 2) _settings() else ..._listing(),
-                      ]),
+                        if (page != 2)
+                          TextButton.icon(
+                            onPressed: client.connected ? _refresh : null,
+                            icon: const Icon(Icons.refresh, size: 16),
+                            label: const Text('Refresh'),
+                          ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    if (page == 2) _settings() else ..._listing(),
+                  ]),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],
