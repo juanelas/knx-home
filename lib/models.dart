@@ -111,6 +111,7 @@ class KnxEntity {
   }
 }
 
+/// Maps the YAML device schema to the app's shared state and command model.
 List<KnxEntity> parseEntities(String yaml) {
   final root = loadYaml(yaml);
   if (root is! YamlMap || root['rooms'] is! YamlList) {
@@ -151,6 +152,8 @@ List<KnxEntity> parseEntities(String yaml) {
         bool assumed = false,
       }) {
         if (address != null && address.isNotEmpty) {
+          // Missing explicit feedback addresses fall back to command addresses
+          // and are marked assumed so startup reads do not query them.
           states.add(
             EntityState(
               id: '$id-${role.name}',

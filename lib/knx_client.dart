@@ -23,6 +23,7 @@ class KnxTelegram {
   final String? dpt, value;
 }
 
+/// Owns the KNXnet/IP tunnel and translates cEMI group telegrams.
 class KnxClient {
   RawDatagramSocket? _socket;
   InternetAddress? _gateway;
@@ -192,6 +193,8 @@ class KnxClient {
       _markDisconnected();
       rethrow;
     }
+    // TX records the group telegram sent by this client. Tunnel packet ACKs
+    // are transport bookkeeping and are not shown as bus telegrams.
     _record(
       'tx',
       _individual(_individualAddress),
@@ -439,6 +442,8 @@ class KnxClient {
     final channel = bytes[7], seq = bytes[8];
     final ackAddress = peer ?? _dataEndpoint;
     if (channel == _channel && _socket != null && ackAddress != null) {
+      // Acknowledge receipt of this KNXnet/IP tunnel packet separately from
+      // any group-level response carried inside its cEMI frame.
       _socket?.send(
         _packet(0x0421, [4, channel, seq, 0]),
         ackAddress,

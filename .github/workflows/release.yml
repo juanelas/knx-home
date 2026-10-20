@@ -215,13 +215,25 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - name: Build Windows bundle
+      - name: Build Windows installer
         shell: pwsh
         run: |
           $version = $env:RELEASE_VERSION
           flutter build windows --release --build-name=$version --build-number=$env:GITHUB_RUN_NUMBER
+          $releaseDir = "build/windows/x64/runner/Release"
+          $materialIcons = Join-Path $releaseDir "data/flutter_assets/fonts/MaterialIcons-Regular.otf"
+          if (!(Test-Path $materialIcons)) {
+            throw "Flutter Material Icons font is missing from the Windows bundle: $materialIcons"
+          }
           New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "dist/knx-home-windows-$env:RELEASE_TAG.zip"
+          choco install innosetup --yes --no-progress
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (!(Test-Path $iscc)) {
+            throw "Inno Setup compiler not found at $iscc"
+          }
+          $outputDir = Join-Path $env:GITHUB_WORKSPACE "dist"
+          & $iscc "/DAppVersion=$version" "/DOutputDir=$outputDir" "packaging\windows\knx-home.iss"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v7
         with:
           name: windows
