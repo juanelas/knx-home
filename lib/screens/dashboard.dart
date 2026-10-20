@@ -130,20 +130,31 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   }
 
   Future<void> _load() async {
-    final p = await SharedPreferences.getInstance();
-    configText = repairStoredMojibake(p.getString('knx-config-yaml') ?? '');
-    host.text = p.getString('knx-host') ?? '';
-    gatewayConfigured = host.text.trim().isNotEmpty;
-    port.text = p.getString('knx-port') ?? '3671';
-    if (configText.isNotEmpty) {
-      try {
+    Object? loadError;
+    try {
+      final p = await SharedPreferences.getInstance();
+      configText = repairStoredMojibake(p.getString('knx-config-yaml') ?? '');
+      host.text = p.getString('knx-host') ?? '';
+      gatewayConfigured = host.text.trim().isNotEmpty;
+      port.text = p.getString('knx-port') ?? '3671';
+      if (configText.isNotEmpty) {
         entities = parseEntities(configText);
         await p.setString('knx-config-yaml', configText);
-      } catch (_) {
-        configText = '';
       }
+    } catch (e) {
+      // A local storage or configuration error must not leave the app stuck
+      // on the startup spinner. Let the user reach setup and show the cause.
+      loadError = e;
+      configText = '';
+      entities = [];
+      host.clear();
+      gatewayConfigured = false;
+    } finally {
+      if (mounted) setState(() => ready = true);
     }
-    setState(() => ready = true);
+    if (loadError != null) {
+      _notice('Could not load saved setup: $loadError', error: true);
+    }
     if (entities.isNotEmpty && host.text.trim().isNotEmpty) {
       try {
         await _connect(silent: true);
@@ -236,16 +247,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     manuallyDisconnected = false;
     setState(() => busy = true);
     try {
-      if (Platform.isAndroid) {
-        final allowed =
-            await localNetworkChannel.invokeMethod<bool>('requestAccess') ??
-            false;
-        if (!allowed) {
-          throw StateError(
-            'Local network access is required to connect to the KNX gateway.',
-          );
-        }
-      }
       await client.connect(host.text.trim(), int.tryParse(port.text) ?? 3671);
       hasConnectedToTunnel = true;
       final p = await SharedPreferences.getInstance();
@@ -795,6 +796,8 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     if (configText.isEmpty || entities.isEmpty || !gatewayConfigured) {
       return WelcomeScreen(
         hasConfiguration: configText.isNotEmpty && entities.isNotEmpty,
+        entities: entities,
+        kindLabel: _label,
         gatewayConfigured: gatewayConfigured,
         connected: client.connected,
         busy: busy,

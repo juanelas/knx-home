@@ -1,12 +1,6 @@
 // Reads imported YAML bytes and repairs text saved by older app versions.
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
-
-const localNetworkChannel = MethodChannel(
-  'com.juanelas.knx_home/local_network',
-);
-
 String decodeConfigBytes(List<int> bytes) {
   if (bytes.length >= 3 &&
       bytes[0] == 0xef &&

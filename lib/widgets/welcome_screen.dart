@@ -2,11 +2,14 @@
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
+import '../models.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({
     super.key,
     required this.hasConfiguration,
+    required this.entities,
+    required this.kindLabel,
     required this.gatewayConfigured,
     required this.connected,
     required this.busy,
@@ -17,6 +20,8 @@ class WelcomeScreen extends StatelessWidget {
   });
 
   final bool hasConfiguration;
+  final List<KnxEntity> entities;
+  final String Function(EntityKind) kindLabel;
   final bool gatewayConfigured;
   final bool connected;
   final bool busy;
@@ -144,6 +149,56 @@ class WelcomeScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 11, color: muted),
                     ),
                   ),
+                  if (hasConfig) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: appPanelDecoration(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.verified_user,
+                                size: 18,
+                                color: dark,
+                              ),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  'Configured KNX entities',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Text(
+                                '${entities.length}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: muted,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 6,
+                            children: [
+                              for (final kind in EntityKind.values)
+                                Text(
+                                  '${entities.where((entity) => entity.kind == kind).length} ${kindLabel(kind)}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: muted,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child: Divider(height: 1),
